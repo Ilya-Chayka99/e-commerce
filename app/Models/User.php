@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Illuminate\Support\Facades\Hash;
 use MongoDB\Laravel\Eloquent\Model;
 
 class User extends Model
@@ -12,7 +13,7 @@ class User extends Model
     protected string $collection = 'users';
 
     public $fillable = ['login', 'password', 'money'];
-    protected $hidden = ['id'];
+    //protected $hidden = ['id'];
 
 
     public function userInfo(): \Illuminate\Database\Eloquent\Relations\HasOne|\MongoDB\Laravel\Relations\HasOne
@@ -32,5 +33,10 @@ class User extends Model
     public static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory|\Database\Factories\UserFactory
     {
         return \Database\Factories\UserFactory::new();
+    }
+
+    public function checkPassword($password): bool
+    {
+        return Hash::check($password, $this->password);
     }
 }
