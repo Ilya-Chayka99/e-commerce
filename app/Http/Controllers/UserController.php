@@ -3,18 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\UserInfo;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function getAll()
-    {
-        $users =  User::with('userInfo')->get();
-        return response()->json($users);
-    }
 
     public function create(Request $request)
     {
@@ -37,18 +33,9 @@ class UserController extends Controller
                 'password' => bcrypt($validatedData['password']),
                 'money' => $validatedData['money'] ?? 0,
             ]);
-            $userInfo = UserInfo::create([
-                'user_id' => $user->_id,
-                'name' => $validatedData['user_info']['name'],
-                'last_name' => $validatedData['user_info']['last_name'],
-                'middle_name' => $validatedData['user_info']['middle_name'] ?? null,
-                'birthday' => $validatedData['user_info']['birthday'] ?? null,
-                'phone' => $validatedData['user_info']['phone'] ?? null,
-            ]);
             DB::commit();
             return response()->json([
-                'user' => $user,
-                'user_info' => $userInfo,
+                'user' => $user
             ], 201);
 
         } catch (\Exception $e) {
@@ -84,25 +71,38 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
-    public function login(Request $request)
+
+    /**
+     * @throws GuzzleException
+     */
+    public function authorization(Request $request)
     {
-        $request->validate([
-            'login' => 'required',
-            'password' => 'required|string|min:8',
+        $code = $request->code;
+        $device_id = $request->device_id;
+
+        if (!$code) {
+            return response()->json(['error' => 'Code is required'], 400);
+        }
+
+
+        $client = new Client();
+        $response = $client->post( 'https://id.vk.com/oauth2/auth', [
+            'form_params' => [
+                'grant_type' =>  'authorization_code',
+                'code' => $code,
+                'code_verifier' => 'aFAwoQihpVpTYqeRqoTiBNCdBEsiOHdZlomIXcWvOtmgiLMbFS',
+                'client_id' => '52559174',
+                'device_id' => $device_id,
+                'redirect_uri' => 'https://vk.com',
+            ]
         ]);
 
-        $user = User::where('login', $request->login)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-           // $token = $user->createToken('auth_token')->plainTextToken;
-            $userInfo = UserInfo::where('user_id', $user->_id)->first();
-            return response()->json([
-                'user' => $user,
-                'user_info' => $userInfo,
-            ]);
-        } else {
-            return response()->json(['message' => 'Неверный login или пароль'], 401);
-        }
+        $vkData = json_decode($response->getBody(), true);
+
+        return response()->json([$vkData , $device_id , $code]);
+
+
     }
 
 }

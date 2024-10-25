@@ -12,14 +12,9 @@ class User extends Model
     protected $connection = 'mongodb';
     protected string $collection = 'users';
 
-    public $fillable = ['login', 'password', 'money'];
-    //protected $hidden = ['id'];
+    public $fillable = ['vkID', 'token', 'money'];
+    protected $hidden = ['id'];
 
-
-    public function userInfo(): \Illuminate\Database\Eloquent\Relations\HasOne|\MongoDB\Laravel\Relations\HasOne
-    {
-        return $this->hasOne(UserInfo::class);
-    }
 
     public function rentals(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
     {
@@ -35,8 +30,4 @@ class User extends Model
         return \Database\Factories\UserFactory::new();
     }
 
-    public function checkPassword($password): bool
-    {
-        return Hash::check($password, $this->password);
-    }
 }
