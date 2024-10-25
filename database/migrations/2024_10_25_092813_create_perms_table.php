@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('computer_metadata', function (Blueprint $table) {
+        Schema::create('perms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price');
+            $table->boolean('edit_tarif');
+            $table->boolean('edit_computer');
+            $table->boolean('add_perms');
+            $table->boolean('free_rentals');
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('computer_metadata');
+        Schema::dropIfExists('perms');
     }
 };

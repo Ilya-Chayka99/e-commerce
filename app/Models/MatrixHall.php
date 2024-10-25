@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
-class Computer_metadata extends Model
+class MatrixHall extends Model
 {
-    use HasFactory;
+    protected $fillable = ['matrix'];
 }

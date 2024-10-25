@@ -5,6 +5,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Computer_metadata;
+use App\Models\User;
+use App\Models\UserInfo;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,8 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-       Computer_metadata::factory(2)->create();
-
+        User::newFactory()->create();
+        UserInfo::newFactory()->create();
 
     }
 }
