@@ -8,9 +8,12 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class User extends Model
 {
+    protected $connection = 'mongodb';
     protected string $collection = 'users';
 
-    protected $fillable = ['login', 'password', 'money'];
+    public $fillable = ['login', 'password', 'money'];
+    protected $hidden = ['id'];
+
 
     public function userInfo(): \Illuminate\Database\Eloquent\Relations\HasOne|\MongoDB\Laravel\Relations\HasOne
     {

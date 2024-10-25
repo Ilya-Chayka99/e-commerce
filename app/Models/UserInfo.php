@@ -7,11 +7,13 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class UserInfo extends Model
 {
+    protected $connection = 'mongodb';
     protected string $collection = 'user_infos';
 
     protected $fillable = [
         'user_id', 'name', 'last_name', 'middle_name', 'birthday', 'phone'
     ];
+    protected $hidden = ['id','user_id'];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
