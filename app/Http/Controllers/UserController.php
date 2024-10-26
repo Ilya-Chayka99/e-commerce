@@ -20,7 +20,7 @@ class UserController extends Controller
         $device_id = $request->device_id;
 
         if (!$code || !$device_id) {
-            return response()->json(['message' => 'Authorization code and deviceID is required'], 500);
+            return response()->json(['message' => 'Authorization code and deviceID is required'], 200);
         }
 
         $client = new Client();
@@ -78,7 +78,7 @@ class UserController extends Controller
 
         $user = User::where('token',$access_token)->first();
         if (!$user){
-            return response()->json(['message' => 'Error receiving information'], 500);
+            return response()->json(['message' => 'Error receiving information'], 200);
         }
 
         $userResponse = $client->post('https://api.vk.com/method/users.get', [
@@ -94,11 +94,11 @@ class UserController extends Controller
             if($userData['error']['error_code'] == 5){
                 return response()->json(['message' => 'Authorization error'], 401);
             }
-            return response()->json(['message' => 'Error receiving information'], 500);
+            return response()->json(['message' => 'Error receiving information'], 200);
         }
 
         if($userData['response'][0]['id'] != $user->vkID){
-            return response()->json(['message' => 'Error receiving information'], 500);
+            return response()->json(['message' => 'Error receiving information'], 200);
         }
         return response()->json(['data' => $userData,'access_token' => $access_token]);
     }
