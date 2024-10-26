@@ -11,67 +11,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-
-    public function create(Request $request)
-    {
-
-        $validatedData = $request->validate([
-            'login' => 'required|string|max:255',
-            'password' => 'required|string|max:255',
-            'money' => 'nullable|numeric',
-            'user_info.name' => 'required|string|max:255',
-            'user_info.last_name' => 'required|string|max:255',
-            'user_info.middle_name' => 'nullable|string|max:255',
-            'user_info.birthday' => 'nullable|date',
-            'user_info.phone' => 'nullable|string|max:255',
-        ]);
-        DB::beginTransaction();
-        try {
-
-            $user = User::create([
-                'login' => $validatedData['login'],
-                'password' => bcrypt($validatedData['password']),
-                'money' => $validatedData['money'] ?? 0,
-            ]);
-            DB::commit();
-            return response()->json([
-                'user' => $user
-            ], 201);
-
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error creating user and user info', 'error' => $e->getMessage()], 500);
-        }
-    }
-    public function update(Request $request)
-    {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,_id',
-            'login' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-            'user_info' => 'sometimes|array',
-            'user_info.name' => 'nullable|string|max:255',
-            'user_info.last_name' => 'nullable|string|max:255',
-            'user_info.middle_name' => 'nullable|string|max:255',
-            'user_info.birthday' => 'nullable|date',
-            'user_info.phone' => 'nullable|string|max:255',
-        ]);
-
-        $user = User::find($request->user_id);
-        if ($request->filled('login')) $user->login = $request->login;
-        if ($request->filled('password')) $user->password = Hash::make($request->password);
-        $user->save();
-
-        if ($request->has('user_info')) {
-            $userInfo = UserInfo::where('user_id', $user->_id)->first();
-            $userInfo->update($request->user_info);
-        }
-
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $user,
-        ]);
-    }
-
     /**
      * @throws GuzzleException
      */
@@ -80,10 +19,9 @@ class UserController extends Controller
         $code = $request->code;
         $device_id = $request->device_id;
 
-        if (!$code) {
-            return response()->json(['error' => 'Code is required'], 400);
+        if (!$code || !$device_id) {
+            return response()->json(['message' => 'Authorization code and deviceID is required'], 500);
         }
-
 
         $client = new Client();
         $response = $client->post( 'https://id.vk.com/oauth2/auth', [
@@ -97,12 +35,72 @@ class UserController extends Controller
             ]
         ]);
 
-
         $vkData = json_decode($response->getBody(), true);
+        if(isset($vkData['error'])) {
+            return response()->json(['message' => 'Authorization error'], 401);
+        }
+        $access_token = $vkData['access_token'];
+        $userID = $vkData['user_id'];
 
-        return response()->json([$vkData , $device_id , $code]);
+        $user = User::where('vkID',$userID)->first();
 
+        if($user){
+            $user->token = $access_token;
+            $user->save();
+        }else{
+            $user = User::create([
+                'vkID' => $userID,
+                'token' => $access_token,
+                'money' => 0,
+            ]);
+        }
 
+        $userResponse = $client->post('https://api.vk.com/method/users.get', [
+            'form_params' => [
+                'access_token' => $access_token,
+                'v' => '5.199',
+                'fields' => 'id,first_name,last_name,photo_max,email,bdate'
+            ]
+        ]);
+        $userData = json_decode($userResponse->getBody(), true);
+
+        return response()->json(['data' => $userData,'access_token' => $access_token]);
+
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getInfo(Request $request){
+        $client = new Client();
+
+        $access_token = $request->access_token;
+
+        $user = User::where('token',$access_token)->first();
+        if (!$user){
+            return response()->json(['message' => 'Error receiving information'], 500);
+        }
+
+        $userResponse = $client->post('https://api.vk.com/method/users.get', [
+            'form_params' => [
+                'access_token' => $access_token,
+                'v' => '5.199',
+                'fields' => 'id,first_name,last_name,photo_max,email,bdate'
+            ]
+        ]);
+        $userData = json_decode($userResponse->getBody(), true);
+
+        if(isset($userData['error'])){
+            if($userData['error']['error_code'] == 5){
+                return response()->json(['message' => 'Authorization error'], 401);
+            }
+            return response()->json(['message' => 'Error receiving information'], 500);
+        }
+
+        if($userData['response'][0]['id'] != $user->vkID){
+            return response()->json(['message' => 'Error receiving information'], 500);
+        }
+        return response()->json(['data' => $userData,'access_token' => $access_token]);
     }
 
 }
