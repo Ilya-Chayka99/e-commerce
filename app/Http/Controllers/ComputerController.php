@@ -2,47 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Computer;
 use Illuminate\Http\Request;
 
 class ComputerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'metadata_id' => 'required|exists:computer_metadata,id',
+            'info_id' => 'required|exists:computer_infos,id',
+        ]);
+
+        $computer = Computer::create([
+            'metadata_id' => $validatedData['metadata_id'],
+            'info_id' => $validatedData['info_id'],
+        ]);
+
+        return response()->json([
+            'message' => 'good',
+            'data' => $computer,
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function getAll()
     {
-        //
-    }
+        $computers = Computer::with(['metadata', 'info','rentals'])->get();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'message' => 'good',
+            'data' => $computers,
+        ]);
     }
 }

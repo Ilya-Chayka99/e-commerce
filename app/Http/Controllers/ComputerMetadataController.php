@@ -2,47 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComputerMetadata;
 use Illuminate\Http\Request;
 
 class ComputerMetadataController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            '*.name' => 'required|string|max:255',
+            '*.price' => 'required|numeric',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $createdRecords = [];
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        foreach ($validatedData as $data) {
+            $existing = ComputerMetadata::where('name', $data['name'])->first();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            if (!$existing) {
+                $computerMetadata = ComputerMetadata::create($data);
+                $createdRecords[] = $computerMetadata;
+            }
+        }
+        if (count($createdRecords) > 0) {
+            return response()->json([
+                'message' => 'good',
+                'data' => $createdRecords,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'no',
+            ]);
+        }
     }
 }
