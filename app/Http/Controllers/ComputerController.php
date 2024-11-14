@@ -27,7 +27,23 @@ class ComputerController extends Controller
 
     public function getAll()
     {
-        $computers = Computer::with(['metadata', 'info','rentals','matrix'])->get();
+        $computers = Computer::with(['metadata', 'info','rentals','matrix'])->get()->map(function ($computer) {
+
+            return [
+                'id' => $computer->id,
+                'metadata' => $computer->metadata,
+                'info' => $computer->info,
+                'rentals' => $computer->rentals,
+                'matrix' => [
+                    'x' => $computer->matrix->x,
+                    'y' => $computer->matrix->y,
+                    'width' => $computer->matrix->width,
+                    'height' => $computer->matrix->height,
+                    'info' => $computer->matrix->info,
+                    'status' => $computer->status
+                ],
+            ];
+        });
 
         return response()->json([
             'message' => 'good',
