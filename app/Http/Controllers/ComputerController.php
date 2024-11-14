@@ -34,7 +34,9 @@ class ComputerController extends Controller
                 'metadata' => $computer->metadata,
                 'info' => $computer->info,
                 'rentals' => $computer->rentals,
+                'matrix_id' => $computer->matrix->id,
                 'matrix' => [
+                    'id' => $computer->matrix->id,
                     'x' => $computer->matrix->x,
                     'y' => $computer->matrix->y,
                     'width' => $computer->matrix->width,
