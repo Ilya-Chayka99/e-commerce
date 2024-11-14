@@ -7,5 +7,10 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class MatrixHall extends Model
 {
-    protected $fillable = ['matrix'];
+    protected $fillable = ['x','y','width','height','info'];
+
+    public function info(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
+    {
+        return $this->belongsTo(Computer::class);
+    }
 }

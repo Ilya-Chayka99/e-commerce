@@ -27,7 +27,7 @@ class ComputerController extends Controller
 
     public function getAll()
     {
-        $computers = Computer::with(['metadata', 'info','rentals'])->get();
+        $computers = Computer::with(['metadata', 'info','rentals','matrix'])->get();
 
         return response()->json([
             'message' => 'good',
