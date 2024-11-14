@@ -31,13 +31,13 @@ class UserController extends Controller
                 'code_verifier' => 'aFAwoQihpVpTYqeRqoTiBNCdBEsiOHdZlomIXcWvOtmgiLMbFS',
                 'client_id' => '52559174',
                 'device_id' => $device_id,
-                'redirect_uri' => 'https://vk.com',
+                'redirect_uri' => 'http://localhost',
             ]
         ]);
 
         $vkData = json_decode($response->getBody(), true);
         if(isset($vkData['error'])) {
-            return response()->json(['message' => 'Authorization error'], 401);
+            return response()->json($vkData['error'], 401);
         }
         $access_token = $vkData['access_token'];
         $userID = $vkData['user_id'];
@@ -92,7 +92,7 @@ class UserController extends Controller
 
         if(isset($userData['error'])){
             if($userData['error']['error_code'] == 5){
-                return response()->json(['message' => 'Authorization error'], 401);
+                return response()->json($userData['error'], 401);
             }
             return response()->json(['message' => 'Error receiving information'], 200);
         }
