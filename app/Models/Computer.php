@@ -34,9 +34,10 @@ class Computer extends Model
     public function getStatusAttribute(): string
     {
         $currentTime = Carbon::now()->setTimezone('Europe/Saratov');
-$int = 0;
+
         foreach ($this->rentals as $rental) {
             $rentStartTime = Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov');
+            $rentStartTime = $rentStartTime->copy()->subHours(4);
             $rentEndTime = $rentStartTime->copy()->addMinutes($rental->minutes);
             if ($currentTime->isbetween($rentStartTime, $rentEndTime,false)) {
                 return 'in_use';
