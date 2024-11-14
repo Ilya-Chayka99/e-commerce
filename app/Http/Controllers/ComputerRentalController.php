@@ -68,13 +68,14 @@ class ComputerRentalController extends Controller
             'user_id' => $user->_id,
             'payment_type' => "rentall",
             'quantity' => -$endPrice,
-            'payment_date' => Carbon::now(),
+            'payment_date' => Carbon::now()->setTimezone('Europe/Saratov'),
         ]);
-
+        $rent = Carbon::parse($validatedData['rent_time'])->setTimezone('Europe/Saratov');
+        $rent = $rent->subHours(4);
         $computerRental = ComputerRental::create([
             'computer_id' => $validatedData['computer_id'],
             'user_id' => $user->id,
-            'rent_time' => $validatedData['rent_time'],
+            'rent_time' => $rent,
             'minutes' => $validatedData['minutes'],
             'end_price' => $endPrice,
         ]);
