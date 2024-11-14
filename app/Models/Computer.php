@@ -34,18 +34,20 @@ class Computer extends Model
     public function getStatusAttribute(): string
     {
         $currentTime = Carbon::now();
+        $currentTime = $currentTime->addHours(4);
 
         foreach ($this->rentals as $rental) {
             $rentStartTime = Carbon::parse($rental->rent_time);
-            $rentStartTime = $rentStartTime->addHours(4);
-            $rentEndTime = $rentStartTime->copy()->addMinutes($rental->minutes_);
+            $rentStartTimes = $rentStartTime;
+            $rentEndTime = $rentStartTimes->copy()->addMinutes($rental->minutes);
 
-            if ($currentTime->between($rentStartTime, $rentEndTime)) {
+            if ($currentTime->between($rentStartTimes, $rentEndTime)) {
                 return 'in_use';
 //                return $currentTime;
             }
         }
 
         return 'available';
+//        return $rentStartTime;
     }
 }
