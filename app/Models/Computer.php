@@ -8,7 +8,7 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class Computer extends Model
 {
-    protected $fillable = ['metadata_id', 'info_id', 'matrix_id'];
+    protected $fillable = ['metadata_id', 'info_id', 'matrix_id','name'];
     protected $hidden = ['metadata_id', 'info_id', 'created_at', 'updated_at'];
 
     public function metadata(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo

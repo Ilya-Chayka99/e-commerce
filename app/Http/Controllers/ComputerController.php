@@ -43,7 +43,7 @@ class ComputerController extends Controller
                     'y' => $computer->matrix->y,
                     'width' => $computer->matrix->width,
                     'height' => $computer->matrix->height,
-                    'info' => $computer->matrix->info,
+                    'info' => $computer->name,
                     'status' => $computer->status
                 ],
             ];

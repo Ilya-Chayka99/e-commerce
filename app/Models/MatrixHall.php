@@ -8,7 +8,7 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class MatrixHall extends Model
 {
-    protected $fillable = ['x','y','width','height','info'];
+    protected $fillable = ['x','y','width','height'];
 
     public function computer(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
