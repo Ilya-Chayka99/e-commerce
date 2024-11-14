@@ -59,7 +59,7 @@ class UserController extends Controller
             'form_params' => [
                 'access_token' => $access_token,
                 'v' => '5.199',
-                'fields' => 'id,first_name,last_name,photo_max,email,bdate'
+                'fields' => 'id,first_name,last_name,photo_max,email,bdate,nickname'
             ]
         ]);
         $userData = json_decode($userResponse->getBody(), true);
@@ -85,7 +85,7 @@ class UserController extends Controller
             'form_params' => [
                 'access_token' => $access_token,
                 'v' => '5.199',
-                'fields' => 'id,first_name,last_name,photo_max,email,bdate'
+                'fields' => 'id,first_name,last_name,photo_max,email,bdate,nickname'
             ]
         ]);
         $userData = json_decode($userResponse->getBody(), true);
