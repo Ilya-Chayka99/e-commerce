@@ -12,11 +12,13 @@ class ComputerController extends Controller
         $validatedData = $request->validate([
             'metadata_id' => 'required|exists:computer_metadata,id',
             'info_id' => 'required|exists:computer_infos,id',
+            'matrix_id' => 'required',
         ]);
 
         $computer = Computer::create([
             'metadata_id' => $validatedData['metadata_id'],
             'info_id' => $validatedData['info_id'],
+            'matrix_id' => $validatedData['matrix_id'],
         ]);
 
         return response()->json([
