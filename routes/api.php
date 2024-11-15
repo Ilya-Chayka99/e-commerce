@@ -10,12 +10,15 @@ use App\Http\Middleware\TokenIsValid;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/authorization', [UserController::class, 'authorization']);
-Route::middleware([TokenIsValid::class])->group(function () {
-    Route::post('/user/getInfo', [UserController::class, 'getInfo']);
+
+Route::prefix('user')->middleware([TokenIsValid::class])->group(function () {
+    Route::post('/getInfo', [UserController::class, 'getInfo']);
+    Route::post('/replenishment', [PaymentHistoryController::class, 'replenishment']);
+    Route::post('/replenishment/history', [PaymentHistoryController::class, 'history']);
 });
 
-Route::post('/user/replenishment', [PaymentHistoryController::class, 'replenishment']);
-Route::post('/user/replenishment/history', [PaymentHistoryController::class, 'history']);
+
+
 Route::post('/computer-addInfo', [ComputerInfoController::class, 'store']);
 Route::post('/computer-addMetadata', [ComputerMetadataController::class, 'store']);
 Route::post('/computer-add', [ComputerController::class, 'store']);
