@@ -68,39 +68,8 @@ class UserController extends Controller
 
     }
 
-    /**
-     * @throws GuzzleException
-     */
     public function getInfo(Request $request){
-        $client = new Client();
-
-        $access_token = $request->access_token;
-
-        $user = User::where('token',$access_token)->first();
-        if (!$user){
-            return response()->json(['message' => 'Error receiving information'], 200);
-        }
-
-        $userResponse = $client->post('https://api.vk.com/method/users.get', [
-            'form_params' => [
-                'access_token' => $access_token,
-                'v' => '5.199',
-                'fields' => 'id,first_name,last_name,photo_max,email,bdate,nickname'
-            ]
-        ]);
-        $userData = json_decode($userResponse->getBody(), true);
-
-        if(isset($userData['error'])){
-            if($userData['error']['error_code'] == 5){
-                return response()->json($userData['error'], 401);
-            }
-            return response()->json(['message' => 'Error receiving information'], 200);
-        }
-
-        if($userData['response'][0]['id'] != $user->vkID){
-            return response()->json(['message' => 'Error receiving information'], 200);
-        }
-        return response()->json(['data' => $userData,'access_token' => $access_token]);
+        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token']]);
     }
 
 }
