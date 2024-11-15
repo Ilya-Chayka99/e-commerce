@@ -74,6 +74,9 @@ class UserController extends Controller
 
     public function getRentalsActive(Request $request){
         $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+        if (!$user){
+            return response()->json(['message' => 'Authorization error'], 200);
+        }
         $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
         if(is_array($activeOrUpcomingRentals) && count($activeOrUpcomingRentals) == 1){
             return response()->json(['data' => [$activeOrUpcomingRentals['1']],'access_token' => $request['access_token']]);

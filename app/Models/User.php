@@ -34,14 +34,12 @@ class User extends Model
     public function activeOrUpcomingRentals(): array
     {
         $currentTime = Carbon::now()->setTimezone('Europe/Saratov');
-        $currentTime = $currentTime->subHours(4);
-
+        $currentTime = $currentTime->addHours(4);
         $rentals =  $this->rentals()->get()->filter(function ($rental) use ($currentTime) {
 
-            $rentEndTime = Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->addMinutes($rental->minutes)->subHours(4);
+            $rentEndTime = Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->addMinutes($rental->minutes);
 
-
-            return $rentEndTime->greaterThan($currentTime) || Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->subHours(4)->greaterThan($currentTime);
+            return $rentEndTime->greaterThan($currentTime) || Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->greaterThan($currentTime);
         });
         return $rentals->toArray();
     }

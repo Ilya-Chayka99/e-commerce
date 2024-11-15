@@ -18,11 +18,14 @@ Route::prefix('user')->middleware([TokenIsValid::class])->group(function () {
     Route::post('/replenishment/history', [PaymentHistoryController::class, 'history']);
 });
 
+Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
+    Route::post('/rental', [ComputerRentalController::class, 'store']);
+});
 
 
 Route::post('/computer-addInfo', [ComputerInfoController::class, 'store']);
 Route::post('/computer-addMetadata', [ComputerMetadataController::class, 'store']);
 Route::post('/computer-add', [ComputerController::class, 'store']);
-Route::post('/computer-rentall', [ComputerRentalController::class, 'store']);
+
 
 Route::post('/computer-all', [ComputerController::class, 'getAll']);
