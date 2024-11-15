@@ -72,4 +72,13 @@ class UserController extends Controller
         return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token']]);
     }
 
+    public function getRentalsActive(Request $request){
+        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+        $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
+        if(is_array($activeOrUpcomingRentals) && count($activeOrUpcomingRentals) == 1){
+            return response()->json(['data' => [$activeOrUpcomingRentals['1']],'access_token' => $request['access_token']]);
+        }
+        return response()->json(['data' => $activeOrUpcomingRentals,'access_token' => $request['access_token']]);
+    }
+
 }

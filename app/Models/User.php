@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,21 @@ class User extends Model
     public static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory|\Database\Factories\UserFactory
     {
         return \Database\Factories\UserFactory::new();
+    }
+
+    public function activeOrUpcomingRentals(): array
+    {
+        $currentTime = Carbon::now()->setTimezone('Europe/Saratov');
+        $currentTime = $currentTime->subHours(4);
+
+        $rentals =  $this->rentals()->get()->filter(function ($rental) use ($currentTime) {
+
+            $rentEndTime = Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->addMinutes($rental->minutes)->subHours(4);
+
+
+            return $rentEndTime->greaterThan($currentTime) || Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov')->subHours(4)->greaterThan($currentTime);
+        });
+        return $rentals->toArray();
     }
 
 }
