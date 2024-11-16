@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Computer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ComputerController extends Controller
@@ -29,6 +30,7 @@ class ComputerController extends Controller
 
     public function getAll()
     {
+       return Carbon::now()->setTimezone('Europe/Saratov')->addHours(4);
         $computers = Computer::with(['metadata', 'info','rentals','matrix'])->get()->map(function ($computer) {
 
             return [
