@@ -31,14 +31,14 @@ class ComputerRentalController extends Controller
         $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
         $computerPrice = $computer->metadata->price;
 
-        $rentStartTime = Carbon::parse($validatedData['rent_start_time'])->addHours(4);
-        $rentEndTime = Carbon::parse($validatedData['rent_end_time'])->addHours(4);
-
+        $rentStartTime = strtotime($validatedData['rent_start_time']);
+        $rentEndTime = strtotime($validatedData['rent_end_time']);
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
 
         foreach ($existingRentals as $rental) {
-            $existingRentStartTime = Carbon::parse($rental->rent_time);
-            $existingRentEndTime = $existingRentStartTime->copy()->addMinutes($rental->minutes);
+            $existingRentStartTime = strtotime($rental->rent_time);
+            $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
+
             // Если новая аренда начинается во время уже существующей аренды
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime) {
                 return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
@@ -55,13 +55,11 @@ class ComputerRentalController extends Controller
             }
         }
 
-
-
-        $rentTime = Carbon::parse($validatedData['rent_start_time']);
-        $tariff = Tarif::where('from', '<=', $rentTime->format('H:i:s'))
-            ->where('to', '>=', $rentTime->format('H:i:s'))
+        $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
+        $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
+            ->where('to', '>=', $rentStartTimeFormatted)
             ->first();
-        $minutesDifference = $rentTime->diffInMinutes(Carbon::parse($validatedData['rent_end_time']));
+        $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
         if (!$tariff) {
             $endPrice = $computerPrice * 1 * $minutesDifference ;
         }else{
@@ -76,9 +74,9 @@ class ComputerRentalController extends Controller
             'user_id' => $user->_id,
             'payment_type' => "rental",
             'quantity' => -$endPrice,
-            'payment_date' => Carbon::now()->addHours(4),
+            'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
         ]);
-        $rent = Carbon::parse($validatedData['rent_start_time'])->addHours(4);
+        $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
         $computerRental = ComputerRental::create([
             'computer_id' => $validatedData['computer_id'],
             'user_id' => $user->id,
