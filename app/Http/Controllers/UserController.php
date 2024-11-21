@@ -83,7 +83,7 @@ class UserController extends Controller
         $rentalsWithComputerNames = [];
 
         foreach ($activeOrUpcomingRentals as $rental) {
-            $computerName = $rental->computer->name;
+            $computerName = $rental['computer']->name;
             $rentalsWithComputerNames = [
                 'rental_id' => $rental['_id'],
                 'computer_name' => $computerName,
