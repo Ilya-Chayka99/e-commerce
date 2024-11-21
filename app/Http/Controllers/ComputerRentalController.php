@@ -116,7 +116,7 @@ class ComputerRentalController extends Controller
 
         $rentEndUnix = mktime($rentEndTime['hours'], $rentEndTime['minutes'], 0, $rentEndTime['mon'], $rentEndTime['mday'], $rentEndTime['year']);
 
-
+        return $currentTime['hours'] . $currentTime['minutes'] . $rentEndUnix;
         if ($currentTime > $rentEndUnix) {
             return response()->json(['message' => 'Rental has already ended'], 200);
         }
