@@ -30,7 +30,7 @@ class TokenIsValid
             'form_params' => [
                 'access_token' => $access_token,
                 'v' => '5.199',
-                'fields' => 'id,first_name,last_name,photo_max,email,bdate,nickname'
+                'fields' => 'id,first_name,last_name,photo_max,email,bdate,screen_name'
             ]
         ]);
         $userData = json_decode($userResponse->getBody(), true);
