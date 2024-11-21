@@ -69,7 +69,8 @@ class UserController extends Controller
     }
 
     public function getInfo(Request $request){
-        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token']]);
+        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money]);
     }
 
     public function getRentalsActive(Request $request){
