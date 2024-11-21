@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Computer;
 use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -79,19 +80,14 @@ class UserController extends Controller
         if (!$user){
             return response()->json(['message' => 'Authorization error'], 200);
         }
-        $activeOrUpcomingRentals = $user->activeOrUpcomingRentals()->with('computer');
-        $rentalsWithComputerNames = [];
+        $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
 
-        foreach ($activeOrUpcomingRentals as $rental) {
-            $computerName = $rental->computer->name;
-            $rentalsWithComputerNames = [
-                'rental_id' => $rental['_id'],
-                'computer_name' => $computerName,
-                'rent_time' => $rental['rent_time'],
-                'minutes' => $rental['minutes'],
-                'end_price' => $rental['end_price'],
-            ];
-        }
+        $rentalsWithComputerNames = array_map(function($rental) {
+            $computer = Computer::find($rental['computer_id']);
+            $rental['computer_name'] = $computer ? $computer->name : 'Unknown';
+            return $rental;
+        }, $activeOrUpcomingRentals);
+
         return response()->json(['data' => array_values($rentalsWithComputerNames),'access_token' => $request['access_token']]);
     }
 
