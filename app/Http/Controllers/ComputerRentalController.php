@@ -138,8 +138,6 @@ class ComputerRentalController extends Controller
 
         $user->money += $refundAmount;
         $user->save();
-
-        // Создаем запись в истории платежей
         $payment = PaymentHistory::create([
             'user_id' => $user->_id,
             'payment_type' => "rental_refund",
@@ -149,12 +147,11 @@ class ComputerRentalController extends Controller
         if($rentStartUnix > $currentTime) {
             $rental->minutes = 0;
             $rental->end_price = $refundAmount;
-            $rental->save();
         } else{
             $rental->minutes = ($currentTime - $rentStartUnix) / 60;
             $rental->end_price = $rental->end_price - $refundAmount;
-            $rental->save();
         }
+        $rental->save();
         return response()->json([
             'message' => 'Refund processed successfully',
             'money' => $user->money,
