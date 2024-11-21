@@ -33,13 +33,21 @@ class User extends Model
 
     public function activeOrUpcomingRentals(): array
     {
-        $currentTime = Carbon::now()->addHours(4);
-        $rentals =  $this->rentals()->get()->filter(function ($rental) use ($currentTime) {
+        $currentTime = getdate(strtotime('now'));
+        $rentals = $this->rentals()->get()->filter(function ($rental) use ($currentTime) {
 
-            $rentEndTime = Carbon::parse($rental->rent_time)->addMinutes($rental->minutes);
+            $rentStartTime = getdate(strtotime($rental->rent_time));
+            $rentEndTime = getdate(strtotime($rental->rent_time) + ($rental->minutes * 60));
 
-            return $rentEndTime->greaterThan($currentTime) || Carbon::parse($rental->rent_time)->greaterThan($currentTime);
+            $rentStartTimeUnix = mktime($rentStartTime['hours'], $rentStartTime['minutes'], 0, $rentStartTime['mon'], $rentStartTime['mday'], $rentStartTime['year']);
+            $rentEndTimeUnix = mktime($rentEndTime['hours'], $rentEndTime['minutes'], 0, $rentEndTime['mon'], $rentEndTime['mday'], $rentEndTime['year']);
+
+            $currentTimeUnix = mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year']);
+
+            // Проверяем, если аренда еще не закончена или еще не началась
+            return $rentEndTimeUnix > $currentTimeUnix || $rentStartTimeUnix > $currentTimeUnix;
         });
+
         return $rentals->toArray();
     }
 

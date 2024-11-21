@@ -7,10 +7,7 @@ use App\Models\ComputerRental;
 use App\Models\PaymentHistory;
 use App\Models\Tarif;
 use App\Models\User;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ComputerRentalController extends Controller
 {

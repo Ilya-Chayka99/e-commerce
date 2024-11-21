@@ -33,19 +33,17 @@ class Computer extends Model
 
     public function getStatusAttribute(): string
     {
-        $currentTime = Carbon::now()->setTimezone('Europe/Saratov');
-
+        $currentTime = getdate(strtotime('now'));
+        $currentTimeUnix = mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year']);
         foreach ($this->rentals as $rental) {
-            $rentStartTime = Carbon::parse($rental->rent_time)->setTimezone('Europe/Saratov');
-            $rentStartTime = $rentStartTime->copy()->subHours(4);
-            $rentEndTime = $rentStartTime->copy()->addMinutes($rental->minutes);
-            if ($currentTime->isbetween($rentStartTime, $rentEndTime,false)) {
+            $rentStartTime = getdate(strtotime($rental->rent_time));
+            $rentStartTimeUnix = mktime($rentStartTime['hours'], $rentStartTime['minutes'], 0, $rentStartTime['mon'], $rentStartTime['mday'], $rentStartTime['year']);
+            $rentEndTimeUnix = $rentStartTimeUnix + ($rental->minutes * 60);
+            if ($currentTimeUnix >= $rentStartTimeUnix && $currentTimeUnix <= $rentEndTimeUnix) {
                 return 'in_use';
-//                return $currentTime;
             }
         }
 
         return 'available';
-//        return $rentStartTime;
     }
 }
