@@ -78,10 +78,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Authorization error'], 200);
         }
         $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
-        if(is_array($activeOrUpcomingRentals) && count($activeOrUpcomingRentals) == 1){
-            return response()->json(['data' => [$activeOrUpcomingRentals['1']],'access_token' => $request['access_token']]);
-        }
-        return response()->json(['data' => $activeOrUpcomingRentals,'access_token' => $request['access_token']]);
+        return response()->json(['data' => array_values($activeOrUpcomingRentals),'access_token' => $request['access_token']]);
     }
 
 }

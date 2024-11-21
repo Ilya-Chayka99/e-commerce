@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'Europe/Saratov'),
+    'timezone' => 'Europe/Saratov',
 
     /*
     |--------------------------------------------------------------------------

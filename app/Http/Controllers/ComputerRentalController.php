@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ComputerRentalController extends Controller
 {
@@ -30,11 +31,37 @@ class ComputerRentalController extends Controller
         $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
         $computerPrice = $computer->metadata->price;
 
-        $rentTime = Carbon::parse($validatedData['rent_start_time'])->setTimezone('Europe/Saratov')->addHours(4);
-        $tariff = Tarif::whereTime('from', '<=', $rentTime)
-            ->whereTime('to', '>=', $rentTime)
+        $rentStartTime = Carbon::parse($validatedData['rent_start_time'])->addHours(4);
+        $rentEndTime = Carbon::parse($validatedData['rent_end_time'])->addHours(4);
+
+        $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
+
+        foreach ($existingRentals as $rental) {
+            $existingRentStartTime = Carbon::parse($rental->rent_time);
+            $existingRentEndTime = $existingRentStartTime->copy()->addMinutes($rental->minutes);
+            // Если новая аренда начинается во время уже существующей аренды
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
+            }
+
+            // Если новая аренда заканчивается во время уже существующей аренды
+            if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the selected end time'], 200);
+            }
+
+            // Если новая аренда полностью покрывает уже существующую
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
+            }
+        }
+
+
+
+        $rentTime = Carbon::parse($validatedData['rent_start_time']);
+        $tariff = Tarif::where('from', '<=', $rentTime->format('H:i:s'))
+            ->where('to', '>=', $rentTime->format('H:i:s'))
             ->first();
-        $minutesDifference = $rentTime->diffInMinutes(Carbon::parse($validatedData['rent_end_time'])->setTimezone('Europe/Saratov')->addHours(4));
+        $minutesDifference = $rentTime->diffInMinutes(Carbon::parse($validatedData['rent_end_time']));
         if (!$tariff) {
             $endPrice = $computerPrice * 1 * $minutesDifference ;
         }else{
@@ -51,7 +78,7 @@ class ComputerRentalController extends Controller
             'quantity' => -$endPrice,
             'payment_date' => Carbon::now()->addHours(4),
         ]);
-        $rent = Carbon::parse($validatedData['rent_start_time'])->setTimezone('Europe/Saratov');
+        $rent = Carbon::parse($validatedData['rent_start_time'])->addHours(4);
         $computerRental = ComputerRental::create([
             'computer_id' => $validatedData['computer_id'],
             'user_id' => $user->id,

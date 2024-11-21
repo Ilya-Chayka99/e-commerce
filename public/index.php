@@ -1,7 +1,7 @@
 <?php
-
+date_default_timezone_set("Europe/Saratov");
 use Illuminate\Http\Request;
-
+//phpinfo();
 
 define('LARAVEL_START', microtime(true));
 
