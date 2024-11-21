@@ -73,6 +73,7 @@ class UserController extends Controller
         return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money]);
     }
 
+
     public function getRentalsActive(Request $request){
         $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
         if (!$user){
