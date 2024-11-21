@@ -121,18 +121,21 @@ class ComputerRentalController extends Controller
             return response()->json(['message' => 'Rental has already ended'], 200);
         }
 
-
-        $remainingTime = ($rentEndUnix - mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year'])) / 60;
+        $currentTime = mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year']);
+        $remainingTime = ($rentEndUnix - $currentTime) / 60;
 
 
         $endPrice = $rental->end_price;
 
+        if($rentStartUnix > $currentTime) {
+            $refundAmount = $endPrice / 2;
+        } else{
+            $remainingAmount = ($remainingTime / $rental->minutes) * $endPrice;
 
-        $remainingAmount = ($remainingTime / $rental->minutes) * $endPrice;
+            $refundAmount = $remainingAmount / 2;
+        }
 
-        $refundAmount = $remainingAmount / 2;
 
-        return $refundAmount;
         $user->money += $refundAmount;
         $user->save();
 
@@ -143,7 +146,15 @@ class ComputerRentalController extends Controller
             'quantity' => $refundAmount,
             'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
         ]);
-
+        if($rentStartUnix > $currentTime) {
+            $rental->minutes = 0;
+            $rental->end_price = $refundAmount;
+            $rental->save();
+        } else{
+            $rental->minutes = ($currentTime - $rentStartUnix) / 60;
+            $rental->end_price = $rental->end_price - $refundAmount;
+            $rental->save();
+        }
         return response()->json([
             'message' => 'Refund processed successfully',
             'money' => $user->money,
