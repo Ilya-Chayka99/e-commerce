@@ -107,8 +107,7 @@ class ComputerRentalController extends Controller
 
         $rentStartTime = getdate(strtotime($rental->rent_time));
 
-        $rentEndTime = $rentStartTime;
-        $rentEndTime['minutes'] += $rental->minutes;
+        $rentEndTime = getdate(strtotime($rental->rent_time) + $rental->minutes);
 
         $currentTime = getdate(strtotime('now'));
 
