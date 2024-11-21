@@ -107,7 +107,7 @@ class ComputerRentalController extends Controller
 
         $rentStartTime = getdate(strtotime($rental->rent_time));
 
-        $rentEndTime = getdate(strtotime($rental->rent_time) + $rental->minutes);
+        $rentEndTime = getdate(strtotime($rental->rent_time) + ($rental->minutes *60));
 
         $currentTime = getdate(strtotime('now'));
 
@@ -116,7 +116,7 @@ class ComputerRentalController extends Controller
 
         $rentEndUnix = mktime($rentEndTime['hours'], $rentEndTime['minutes'], 0, $rentEndTime['mon'], $rentEndTime['mday'], $rentEndTime['year']);
 
-        return  $rentEndTime['minutes'];
+        return  $rentEndTime['hours'];
         if ($currentTime > $rentEndUnix) {
             return response()->json(['message' => 'Rental has already ended'], 200);
         }
