@@ -22,5 +22,5 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
     --install-dir=/usr/local/bin
-
+RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
