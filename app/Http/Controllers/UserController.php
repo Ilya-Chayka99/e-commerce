@@ -79,11 +79,11 @@ class UserController extends Controller
         if (!$user){
             return response()->json(['message' => 'Authorization error'], 200);
         }
-        $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
+        $activeOrUpcomingRentals = $user->activeOrUpcomingRentals()->load('computer');
         $rentalsWithComputerNames = [];
 
         foreach ($activeOrUpcomingRentals as $rental) {
-            $computerName = $rental['computer']->name;
+            $computerName = $rental->computer->name;
             $rentalsWithComputerNames = [
                 'rental_id' => $rental['_id'],
                 'computer_name' => $computerName,
