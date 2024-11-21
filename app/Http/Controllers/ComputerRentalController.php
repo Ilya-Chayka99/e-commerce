@@ -95,7 +95,7 @@ class ComputerRentalController extends Controller
             'rental_id' => 'required',
         ]);
 
-        $user = User::where('access_token', $validatedData['access_token'])->first();
+        $user = User::where('token', $validatedData['access_token'])->first();
         if (!$user) {
             return response()->json(['message' => 'User not found or invalid token'], 200);
         }
