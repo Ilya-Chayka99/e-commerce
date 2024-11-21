@@ -86,4 +86,68 @@ class ComputerRentalController extends Controller
             'message' => 'good',
         ]);
     }
+
+    public function cancelRental(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'access_token' => 'required',
+            'rental_id' => 'required',
+        ]);
+
+        $user = User::where('access_token', $validatedData['access_token'])->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found or invalid token'], 200);
+        }
+
+        $rental = ComputerRental::find($validatedData['rental_id']);
+        if (!$rental) {
+            return response()->json(['message' => 'Rental not found'], 404);
+        }
+
+        $rentStartTime = getdate(strtotime($rental->rent_time));
+
+        $rentEndTime = $rentStartTime;
+        $rentEndTime['minutes'] += $rental->minutes;
+
+        $currentTime = getdate(strtotime('now'));
+
+
+        $rentStartUnix = mktime($rentStartTime['hours'], $rentStartTime['minutes'], 0, $rentStartTime['mon'], $rentStartTime['mday'], $rentStartTime['year']);
+
+        $rentEndUnix = mktime($rentEndTime['hours'], $rentEndTime['minutes'], 0, $rentEndTime['mon'], $rentEndTime['mday'], $rentEndTime['year']);
+
+
+        if ($currentTime > $rentEndUnix) {
+            return response()->json(['message' => 'Rental has already ended'], 200);
+        }
+
+
+        $remainingTime = ($rentEndUnix - mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year'])) / 60;
+
+
+        $endPrice = $rental->end_price;
+
+
+        $remainingAmount = ($remainingTime / $rental->minutes) * $endPrice;
+
+        $refundAmount = $remainingAmount / 2;
+
+        return $refundAmount;
+        $user->money += $refundAmount;
+        $user->save();
+
+        // Создаем запись в истории платежей
+        $payment = PaymentHistory::create([
+            'user_id' => $user->_id,
+            'payment_type' => "rental_refund",
+            'quantity' => $refundAmount,
+            'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
+        ]);
+
+        return response()->json([
+            'message' => 'Refund processed successfully',
+            'money' => $user->money,
+        ]);
+    }
 }

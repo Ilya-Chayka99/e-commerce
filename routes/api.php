@@ -20,6 +20,7 @@ Route::prefix('user')->middleware([TokenIsValid::class])->group(function () {
 
 Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
     Route::post('/rental', [ComputerRentalController::class, 'store']);
+    Route::post('/rentalOff', [ComputerRentalController::class, 'cancelRental']);
 });
 
 
