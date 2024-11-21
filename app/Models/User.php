@@ -45,7 +45,7 @@ class User extends Model
             $currentTimeUnix = mktime($currentTime['hours'], $currentTime['minutes'], 0, $currentTime['mon'], $currentTime['mday'], $currentTime['year']);
 
             // Проверяем, если аренда еще не закончена или еще не началась
-            return $rentEndTimeUnix > $currentTimeUnix || $rentStartTimeUnix > $currentTimeUnix;
+            return ($rentEndTimeUnix > $currentTimeUnix || $rentStartTimeUnix > $currentTimeUnix) && $rental->minutes != 0;
         });
 
         return $rentals->toArray();
