@@ -25,7 +25,7 @@ class ComputerRentalController extends Controller
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
-        return  date('Y-m-d H:i:s', $rentStartTime);
+        return  date('Y-m-d H:i:s', $currentTime);
         foreach ($existingRentals as $rental) {
             $existingRentStartTime = strtotime($rental->rent_time);
             $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
