@@ -44,7 +44,7 @@ class ComputerRentalController extends Controller
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
-return  date('Y-m-d H:i:s', $rentStartTime);
+
             if($rentStartTime < $currentTime){
                 return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
             }
