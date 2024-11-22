@@ -25,7 +25,9 @@ class ComputerRentalController extends Controller
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
-        return  date('Y-m-d H:i:s', $currentTime);
+        if($rentStartTime < $currentTime){
+            return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
+        }
         foreach ($existingRentals as $rental) {
             $existingRentStartTime = strtotime($rental->rent_time);
             $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
@@ -43,10 +45,6 @@ class ComputerRentalController extends Controller
             // Если новая аренда полностью покрывает уже существующую
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
-            }
-
-            if($rentStartTime < $currentTime){
-                return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
             }
         }
 
@@ -84,7 +82,9 @@ class ComputerRentalController extends Controller
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
-
+        if($rentStartTime < $currentTime){
+            return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
+        }
         foreach ($existingRentals as $rental) {
             $existingRentStartTime = strtotime($rental->rent_time);
             $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
@@ -102,10 +102,6 @@ class ComputerRentalController extends Controller
             // Если новая аренда полностью покрывает уже существующую
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
-            }
-
-            if($rentStartTime < $currentTime){
-                return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
             }
         }
 
