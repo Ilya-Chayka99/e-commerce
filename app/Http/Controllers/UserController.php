@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Computer;
+use App\Models\Perm;
+use App\Models\PermAdjacent;
 use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -71,7 +73,17 @@ class UserController extends Controller
 
     public function getInfo(Request $request){
         $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
-        $permissions = $user->permissions()->get();
+        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
+
+        $permissions = [];
+
+        foreach ($permAdjacentRecords as $permAdjacent) {
+            $permission = Perm::find($permAdjacent->perm_id);
+
+            if ($permission) {
+                $permissions[] = $permission;
+            }
+        }
         return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions]);
     }
 

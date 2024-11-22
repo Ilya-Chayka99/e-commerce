@@ -16,6 +16,6 @@ class PermAdjacent extends Model
 
     public function perm(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
-        return $this->belongsTo(Perm::class);
+        return $this->belongsTo(Perm::class, 'perm_id');
     }
 }

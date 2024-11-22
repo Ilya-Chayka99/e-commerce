@@ -21,9 +21,10 @@ class User extends Model
     {
         return $this->hasMany(ComputerRental::class);
     }
-    public function permissions(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
+    public function perms(): \MongoDB\Laravel\Relations\BelongsToMany|\Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(PermAdjacent::class, 'user_id');
+        // belongsToMany() использует таблицу `perm_adjacent`, где есть `user_id` и `perm_id`
+        return $this->belongsToMany(Perm::class, 'perm_adjacent', 'user_id', 'perm_id');
     }
     public function payments(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
     {
