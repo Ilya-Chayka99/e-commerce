@@ -25,7 +25,7 @@ class ComputerRentalController extends Controller
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
-        if($rentStartTime < $currentTime){
+        if($rentStartTime < $currentTime || $rentStartTime > $rentEndTime){
             return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
         }
         foreach ($existingRentals as $rental) {
@@ -82,7 +82,7 @@ class ComputerRentalController extends Controller
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
-        if($rentStartTime < $currentTime){
+        if($rentStartTime < $currentTime || $rentStartTime > $rentEndTime){
             return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
         }
         foreach ($existingRentals as $rental) {
