@@ -52,7 +52,6 @@ class ComputerRentalController extends Controller
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
             ->first();
-        return $rentStartTimeFormatted;
         $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
         if (!$tariff) {
             $endPrice = $computerPrice * 1 * $minutesDifference ;
