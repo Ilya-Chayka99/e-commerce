@@ -22,6 +22,8 @@ Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () 
     Route::post('/rental', [ComputerRentalController::class, 'store']);
     Route::post('/rentalOff', [ComputerRentalController::class, 'cancelRental']);
 });
+Route::post('/computer/rentalCheck', [ComputerRentalController::class, 'check']);
+
 
 
 Route::post('/computer-addInfo', [ComputerInfoController::class, 'store']);

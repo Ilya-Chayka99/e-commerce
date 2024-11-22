@@ -11,25 +11,19 @@ use Illuminate\Http\Request;
 
 class ComputerRentalController extends Controller
 {
-    public function store(Request $request)
+    public function check(Request $request)
     {
         $validatedData = $request->validate([
-            'computer_id' => 'required|exists:computers,id',
+            'computer_id' => 'required',
             'rent_start_time' => 'required',
             'rent_end_time' => 'required',
-            'access_token' => 'required'
         ]);
-
-        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
-        if (!$user){
-            return response()->json(['message' => 'Authorization error'], 200);
-        }
-
         $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
         $computerPrice = $computer->metadata->price;
 
         $rentStartTime = strtotime($validatedData['rent_start_time']);
         $rentEndTime = strtotime($validatedData['rent_end_time']);
+        $currentTime = strtotime('now');
         $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
 
         foreach ($existingRentals as $rental) {
@@ -49,6 +43,69 @@ class ComputerRentalController extends Controller
             // Если новая аренда полностью покрывает уже существующую
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
+            }
+
+            if($rentStartTime < $currentTime){
+                return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
+            }
+        }
+
+        $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
+        $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
+            ->where('to', '>=', $rentStartTimeFormatted)
+            ->first();
+        $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
+        if (!$tariff) {
+            $endPrice = $computerPrice * 1 * $minutesDifference ;
+        }else{
+            $endPrice = $computerPrice * $tariff->coefficient * $minutesDifference;
+        }
+
+        return response()->json(['price' => $endPrice], 200);
+    }
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'computer_id' => 'required',
+            'rent_start_time' => 'required',
+            'rent_end_time' => 'required',
+            'access_token' => 'required'
+        ]);
+
+        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+        if (!$user){
+            return response()->json(['message' => 'Authorization error'], 200);
+        }
+
+        $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
+        $computerPrice = $computer->metadata->price;
+
+        $rentStartTime = strtotime($validatedData['rent_start_time']);
+        $rentEndTime = strtotime($validatedData['rent_end_time']);
+        $currentTime = strtotime('now');
+        $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
+
+        foreach ($existingRentals as $rental) {
+            $existingRentStartTime = strtotime($rental->rent_time);
+            $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
+
+            // Если новая аренда начинается во время уже существующей аренды
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
+            }
+
+            // Если новая аренда заканчивается во время уже существующей аренды
+            if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the selected end time'], 200);
+            }
+
+            // Если новая аренда полностью покрывает уже существующую
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+                return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
+            }
+
+            if($rentStartTime < $currentTime){
+                return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
             }
         }
 
