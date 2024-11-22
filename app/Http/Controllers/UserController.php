@@ -71,7 +71,8 @@ class UserController extends Controller
 
     public function getInfo(Request $request){
         $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
-        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money]);
+        $permissions = $user->permissions()->get();
+        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions]);
     }
 
 

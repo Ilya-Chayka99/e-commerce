@@ -21,7 +21,10 @@ class User extends Model
     {
         return $this->hasMany(ComputerRental::class);
     }
-
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
+    {
+        return $this->hasMany(PermAdjacent::class, 'user_id');
+    }
     public function payments(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
     {
         return $this->hasMany(PaymentHistory::class);

@@ -23,7 +23,7 @@ Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () 
     Route::post('/rentalOff', [ComputerRentalController::class, 'cancelRental']);
 });
 Route::post('/computer/rentalCheck', [ComputerRentalController::class, 'check']);
-
+Route::post('/computer-all', [ComputerController::class, 'getAll']);
 
 
 Route::post('/computer-addInfo', [ComputerInfoController::class, 'store']);
@@ -31,4 +31,4 @@ Route::post('/computer-addMetadata', [ComputerMetadataController::class, 'store'
 Route::post('/computer-add', [ComputerController::class, 'store']);
 
 
-Route::post('/computer-all', [ComputerController::class, 'getAll']);
+
