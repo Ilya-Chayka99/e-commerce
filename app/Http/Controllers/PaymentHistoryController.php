@@ -27,7 +27,7 @@ class PaymentHistoryController extends Controller
             'user_id' => $user->_id,
             'payment_type' => $payment_type,
             'quantity' => $quantity,
-            'payment_date' => Carbon::now()->setTimezone('Europe/Saratov'),
+            'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
             'payment_hash' => $payment_hash,
         ]);
         $user->money = $user->money + $quantity;
