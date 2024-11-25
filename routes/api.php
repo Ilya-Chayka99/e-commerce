@@ -29,7 +29,7 @@ Route::post('/computer-all', [ComputerController::class, 'getAll']);
 //Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
     Route::post('/computer/addInfo', [ComputerInfoController::class, 'store']);//->middleware([PermCheck::class]);
     Route::post('/computer/addMetadata', [ComputerMetadataController::class, 'store']);//->middleware([PermCheck::class]);
-    Route::post('computer//add', [ComputerController::class, 'store']);//->middleware([PermCheck::class]);
+    Route::post('/computer/add', [ComputerController::class, 'store']);//->middleware([PermCheck::class]);
 //});
 
 
