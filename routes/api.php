@@ -6,6 +6,7 @@ use App\Http\Controllers\ComputerMetadataController;
 use App\Http\Controllers\ComputerRentalController;
 use App\Http\Controllers\PaymentHistoryController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\PermCheck;
 use App\Http\Middleware\TokenIsValid;
 use Illuminate\Support\Facades\Route;
 
@@ -25,10 +26,12 @@ Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () 
 Route::post('/computer/rentalCheck', [ComputerRentalController::class, 'check']);
 Route::post('/computer-all', [ComputerController::class, 'getAll']);
 
+//Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
+    Route::post('/computer/addInfo', [ComputerInfoController::class, 'store']);//->middleware([PermCheck::class]);
+    Route::post('/computer/addMetadata', [ComputerMetadataController::class, 'store']);//->middleware([PermCheck::class]);
+    Route::post('computer//add', [ComputerController::class, 'store']);//->middleware([PermCheck::class]);
+//});
 
-//Route::post('/computer-addInfo', [ComputerInfoController::class, 'store']);
-//Route::post('/computer-addMetadata', [ComputerMetadataController::class, 'store']);
-//Route::post('/computer-add', [ComputerController::class, 'store']);
 
 
 
