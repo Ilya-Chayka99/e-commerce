@@ -31,7 +31,7 @@ class PaymentHistoryController extends Controller
         $client = new Client();
 
         while (true){
-            $response = $client->get( 'http://89.111.131.40:8080/getInfoByPaymentLink?linkKey',[
+            $response = $client->get( 'http://89.111.131.40:8080/getInfoByPaymentLink',[
                 'query' => [
                     'linkKey' => $request->link
                 ]
