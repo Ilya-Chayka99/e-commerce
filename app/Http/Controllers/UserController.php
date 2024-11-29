@@ -40,7 +40,7 @@ class UserController extends Controller
 
         $vkData = json_decode($response->getBody(), true);
         if(isset($vkData['error'])) {
-            return response()->json($vkData['error'], 401);
+            return response()->json(['message' => $vkData['error']], 200);
         }
         $access_token = $vkData['access_token'];
         $userID = $vkData['user_id'];
