@@ -39,6 +39,7 @@ class PaymentHistoryController extends Controller
             $link = json_decode($response->getBody(), true);
             if($link['paymentStatus'] == -1) return response()->json(['message' => 'Error'], 200);
             if ($link['paymentStatus'] == 1) break;
+            sleep(1);
         }
 
 
