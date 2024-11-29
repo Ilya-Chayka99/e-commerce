@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('matrix_halls', function (Blueprint $table) {
-            $table->id();
-            $table->integer('x');
-            $table->integer('y');
-            $table->integer('width');
-            $table->integer('height');
-            $table->timestamps();
+        Schema::table('computers', function (Blueprint $table) {
+            $table->string('name')->nullable();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('matrix_halls');
+        Schema::table('computers', function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
     }
 };

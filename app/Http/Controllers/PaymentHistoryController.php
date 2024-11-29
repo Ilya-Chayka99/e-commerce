@@ -24,7 +24,7 @@ class PaymentHistoryController extends Controller
             return response()->json(['message' => 'Error not enough money'], 200);
         }
         $payment = PaymentHistory::create([
-            'user_id' => $user->_id,
+            'user_id' => $user->id,
             'payment_type' => $payment_type,
             'quantity' => $quantity,
             'payment_date' => date('Y-m-d H:i:s', strtotime('now')),

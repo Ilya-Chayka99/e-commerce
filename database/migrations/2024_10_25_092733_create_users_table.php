@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('vkID')->unique();
-            $table->string('token');
+            $table->string('token')->unique();
             $table->decimal('money', 8, 2);
             $table->timestamps();
         });

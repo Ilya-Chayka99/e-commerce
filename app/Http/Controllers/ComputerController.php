@@ -11,11 +11,10 @@ class ComputerController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'metadata_id' => 'required|exists:computer_metadata,id',
-            'info_id' => 'required|exists:computer_infos,id',
+            'metadata_id' => 'required',
+            'info_id' => 'required',
             'matrix_id' => 'required',
         ]);
-
         $computer = Computer::create([
             'metadata_id' => $validatedData['metadata_id'],
             'info_id' => $validatedData['info_id'],

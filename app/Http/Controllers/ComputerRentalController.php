@@ -121,7 +121,7 @@ class ComputerRentalController extends Controller
         $user->money = $user->money - $endPrice;
         $user->save();
         $payment = PaymentHistory::create([
-            'user_id' => $user->_id,
+            'user_id' => $user->id,
             'payment_type' => "rental",
             'quantity' => -$endPrice,
             'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
@@ -192,7 +192,7 @@ class ComputerRentalController extends Controller
         $user->money += $refundAmount;
         $user->save();
         $payment = PaymentHistory::create([
-            'user_id' => $user->_id,
+            'user_id' => $user->id,
             'payment_type' => "rental_refund",
             'quantity' => $refundAmount,
             'payment_date' => date('Y-m-d H:i:s', strtotime('now')),

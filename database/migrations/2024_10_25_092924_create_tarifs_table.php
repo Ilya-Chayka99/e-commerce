@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('tarifs', function (Blueprint $table) {
             $table->id();
-            $table->time('from');
-            $table->time('to');
+            $table->string('from');
+            $table->string('to');
             $table->decimal('coefficient', 8, 2);
             $table->timestamps();
         });

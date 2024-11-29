@@ -125,10 +125,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'providers' => ServiceProvider::defaultProviders()->merge([
-
-        MongoDB\Laravel\MongoDBServiceProvider::class,
-
-    ])->toArray(),
+//    'providers' => ServiceProvider::defaultProviders()->merge([
+//
+//        MongoDB\Laravel\MongoDBServiceProvider::class,
+//
+//    ])->toArray(),
 
 ];

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('computer_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
-            $table->dateTime('rent_time');
+            $table->string('rent_time');
             $table->bigInteger('minutes');
             $table->decimal('end_price', 8, 2);
             $table->timestamps();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->string('payment_type');
             $table->decimal('quantity', 8, 2);
-            $table->dateTime('payment_date');
+            $table->string('payment_date');
             $table->string('payment_hash')->nullable();
             $table->timestamps();
 
