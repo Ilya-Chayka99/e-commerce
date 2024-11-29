@@ -35,7 +35,7 @@ class PaymentHistoryController extends Controller
         while (true){
             $response = $client->post( 'http://89.111.131.40:8080/getInfoByPaymentLink?linkKey='.$request->link);
             $link = json_decode($response->getBody(), true);
-            if($link['paymentStatus'] == -1 || $link['state'] == 'error') return response()->json(['message' => 'Error'], 200);
+            if($link['state'] == 'error' || $link['paymentStatus'] == -1) return response()->json(['message' => 'Error'], 200);
             if ($link['paymentStatus'] == 1) break;
             sleep(3);
         }
