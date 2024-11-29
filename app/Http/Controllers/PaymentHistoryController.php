@@ -29,9 +29,12 @@ class PaymentHistoryController extends Controller
         }
 
         $client = new Client();
+        $params = [
+            'linkKey' =>  $request->link,
+           ];
         while (true){
             $response = $client->get( 'http://89.111.131.40:8080/getInfoByPaymentLink', [
-                'linkKey' =>  $request->link,
+                'query' => $params
             ]);
             $link = json_decode($response->getBody(), true);
             if($link['status']=="error") return response()->json(['message' => 'Error'], 200);
