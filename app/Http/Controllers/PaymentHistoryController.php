@@ -33,7 +33,7 @@ class PaymentHistoryController extends Controller
             'linkKey' =>  $request->link,
            ];
         while (true){
-            $response = $client->get( 'http://89.111.131.40:8080/getInfoByPaymentLink', [
+            $response = $client->post( 'http://89.111.131.40:8080/getInfoByPaymentLink', [
                 'query' => $params
             ]);
             $link = json_decode($response->getBody(), true);
