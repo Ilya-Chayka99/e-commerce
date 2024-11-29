@@ -37,7 +37,6 @@ class UserController extends Controller
                 'redirect_uri' => 'http://localhost',
             ]
         ]);
-
         $vkData = json_decode($response->getBody(), true);
         if(isset($vkData['error'])) {
             return response()->json(['message' => $vkData['error']], 200);

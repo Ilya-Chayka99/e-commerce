@@ -41,7 +41,7 @@ class PaymentHistoryController extends Controller
         if (!$user){
             return response()->json(['message' => 'Authorization error'], 200);
         }
-        $paymentHistory = PaymentHistory::where('user_id', $user->_id)->get();
+        $paymentHistory = PaymentHistory::where('user_id', $user->id)->get();
         return response()->json($paymentHistory, 200);
     }
 }
