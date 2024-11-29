@@ -33,17 +33,17 @@ class ComputerRentalController extends Controller
             $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
 
             // Если новая аренда начинается во время уже существующей аренды
-            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime) {
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rental->minutes !=0) {
                 return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
             }
 
             // Если новая аренда заканчивается во время уже существующей аренды
-            if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+            if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
                 return response()->json(['message' => 'Computer is already rented during the selected end time'], 200);
             }
 
             // Если новая аренда полностью покрывает уже существующую
-            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime) {
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
