@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
 
-    public $fillable = ['vkID', 'token', 'money'];
+    public $fillable = ['vkID', 'token', 'money', 'name', 'email', 'password'];
     protected $hidden = ['id'];
 
 

@@ -16,6 +16,7 @@ Route::prefix('user')->middleware([TokenIsValid::class])->group(function () {
     Route::post('/getInfo', [UserController::class, 'getInfo']);
     Route::post('/getRentalsActive', [UserController::class, 'getRentalsActive']);
     Route::post('/replenishment', [PaymentHistoryController::class, 'replenishment']);
+    Route::post('/getLink', [PaymentHistoryController::class, 'getLink']);
     Route::post('/replenishment/history', [PaymentHistoryController::class, 'history']);
 });
 
