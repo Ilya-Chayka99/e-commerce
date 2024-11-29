@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    protected $connection = 'mongodb';
-    protected string $collection = 'users';
 
     public $fillable = ['vkID', 'token', 'money'];
     protected $hidden = ['id'];
