@@ -193,6 +193,8 @@ if (!function_exists('PHPUnit\Framework\assertArrayNotHasKey')) {
 
 if (!function_exists('PHPUnit\Framework\assertIsList')) {
     /**
+     * @phpstan-assert list<mixed> $array
+     *
      * @throws ExpectationFailedException
      *
      * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
@@ -279,7 +281,8 @@ if (!function_exists('PHPUnit\Framework\assertContainsOnly')) {
     /**
      * Asserts that a haystack contains only values of a given type.
      *
-     * @param iterable<mixed> $haystack
+     * @param 'array'|'bool'|'boolean'|'callable'|'double'|'float'|'int'|'integer'|'iterable'|'null'|'numeric'|'object'|'real'|'resource (closed)'|'resource'|'scalar'|'string' $type
+     * @param iterable<mixed>                                                                                                                                                   $haystack
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -298,6 +301,7 @@ if (!function_exists('PHPUnit\Framework\assertContainsOnlyInstancesOf')) {
     /**
      * Asserts that a haystack contains only instances of a given class name.
      *
+     * @param class-string    $className
      * @param iterable<mixed> $haystack
      *
      * @throws Exception
@@ -317,7 +321,8 @@ if (!function_exists('PHPUnit\Framework\assertNotContainsOnly')) {
     /**
      * Asserts that a haystack does not contain only values of a given type.
      *
-     * @param iterable<mixed> $haystack
+     * @param 'array'|'bool'|'boolean'|'callable'|'double'|'float'|'int'|'integer'|'iterable'|'null'|'numeric'|'object'|'real'|'resource (closed)'|'resource'|'scalar'|'string' $type
+     * @param iterable<mixed>                                                                                                                                                   $haystack
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -576,7 +581,7 @@ if (!function_exists('PHPUnit\Framework\assertGreaterThan')) {
      *
      * @see Assert::assertGreaterThan
      */
-    function assertGreaterThan(mixed $expected, mixed $actual, string $message = ''): void
+    function assertGreaterThan(mixed $minimum, mixed $actual, string $message = ''): void
     {
         Assert::assertGreaterThan(...func_get_args());
     }
@@ -592,7 +597,7 @@ if (!function_exists('PHPUnit\Framework\assertGreaterThanOrEqual')) {
      *
      * @see Assert::assertGreaterThanOrEqual
      */
-    function assertGreaterThanOrEqual(mixed $expected, mixed $actual, string $message = ''): void
+    function assertGreaterThanOrEqual(mixed $minimum, mixed $actual, string $message = ''): void
     {
         Assert::assertGreaterThanOrEqual(...func_get_args());
     }
@@ -608,7 +613,7 @@ if (!function_exists('PHPUnit\Framework\assertLessThan')) {
      *
      * @see Assert::assertLessThan
      */
-    function assertLessThan(mixed $expected, mixed $actual, string $message = ''): void
+    function assertLessThan(mixed $maximum, mixed $actual, string $message = ''): void
     {
         Assert::assertLessThan(...func_get_args());
     }
@@ -624,7 +629,7 @@ if (!function_exists('PHPUnit\Framework\assertLessThanOrEqual')) {
      *
      * @see Assert::assertLessThanOrEqual
      */
-    function assertLessThanOrEqual(mixed $expected, mixed $actual, string $message = ''): void
+    function assertLessThanOrEqual(mixed $maximum, mixed $actual, string $message = ''): void
     {
         Assert::assertLessThanOrEqual(...func_get_args());
     }
@@ -1374,7 +1379,7 @@ if (!function_exists('PHPUnit\Framework\assertIsArray')) {
      * @throws Exception
      * @throws ExpectationFailedException
      *
-     * @phpstan-assert array $actual
+     * @phpstan-assert array<mixed> $actual
      *
      * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
      *
@@ -1583,7 +1588,7 @@ if (!function_exists('PHPUnit\Framework\assertIsIterable')) {
      * @throws Exception
      * @throws ExpectationFailedException
      *
-     * @phpstan-assert iterable $actual
+     * @phpstan-assert iterable<mixed> $actual
      *
      * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
      *
@@ -1602,7 +1607,7 @@ if (!function_exists('PHPUnit\Framework\assertIsNotArray')) {
      * @throws Exception
      * @throws ExpectationFailedException
      *
-     * @phpstan-assert !array $actual
+     * @phpstan-assert !array<mixed> $actual
      *
      * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
      *
@@ -1811,7 +1816,7 @@ if (!function_exists('PHPUnit\Framework\assertIsNotIterable')) {
      * @throws Exception
      * @throws ExpectationFailedException
      *
-     * @phpstan-assert !iterable $actual
+     * @phpstan-assert !iterable<mixed> $actual
      *
      * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
      *
