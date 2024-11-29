@@ -66,7 +66,7 @@ class PaymentHistoryController extends Controller
             return response()->json(['message' => 'Error not enough money'], 200);
         }
 
-        $client = new Client();
+//        $client = new Client();
 //        $response = $client->get( 'http://89.111.131.40:8080/createApiPaymentLink', [
 //            'livingTime' =>  3000000000,
 //            'priceType' => 4,
