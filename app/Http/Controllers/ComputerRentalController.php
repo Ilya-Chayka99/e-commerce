@@ -49,12 +49,20 @@ class ComputerRentalController extends Controller
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
+        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
 
+        $permissions = [];
 
-        $permAdjacentRecords = $request['perm'];
-        return response()->json(['price' => $permAdjacentRecords], 200);
-        $flag =false;
         foreach ($permAdjacentRecords as $permAdjacent) {
+            $permission = Perm::find($permAdjacent->perm_id);
+
+            if ($permission) {
+                $permissions[] = $permission;
+            }
+        }
+        $flag =false;
+        foreach ($permissions as $permAdjacent) {
             $permission = Perm::find($permAdjacent->perm_id);
 
             if ($permission && $permission->free_rentals) {
