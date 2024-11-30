@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Computer;
+use App\Models\ComputerRental;
 use App\Models\Perm;
 use App\Models\PermAdjacent;
 use App\Models\User;
@@ -83,7 +84,8 @@ class UserController extends Controller
                 $permissions[] = $permission;
             }
         }
-        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions]);
+        $rentalsHistory = ComputerRental::where('user_id', $user->id)->get();
+        return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions,'rentals'=>$rentalsHistory]);
     }
 
 
