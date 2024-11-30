@@ -49,27 +49,27 @@ class ComputerRentalController extends Controller
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
-        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
-        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
-
-        $permissions = [];
-
-        foreach ($permAdjacentRecords as $permAdjacent) {
-            $permission = Perm::find($permAdjacent->perm_id);
-
-            if ($permission) {
-                $permissions[] = $permission;
-            }
-        }
-        $flag =false;
-        foreach ($permissions as $permAdjacent) {
-            $permission = Perm::find($permAdjacent->perm_id);
-
-            if ($permission && $permission->free_rentals) {
-                $flag = true;
-            }
-        }
-        if($flag){ return response()->json(['price' => 0], 200);}
+//        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
+//        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
+//
+//        $permissions = [];
+//
+//        foreach ($permAdjacentRecords as $permAdjacent) {
+//            $permission = Perm::find($permAdjacent->perm_id);
+//
+//            if ($permission) {
+//                $permissions[] = $permission;
+//            }
+//        }
+//        $flag =false;
+//        foreach ($permissions as $permAdjacent) {
+//            $permission = Perm::find($permAdjacent->perm_id);
+//
+//            if ($permission && $permission->free_rentals) {
+//                $flag = true;
+//            }
+//        }
+//        if($flag){ return response()->json(['price' => 0], 200);}
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
@@ -126,30 +126,30 @@ class ComputerRentalController extends Controller
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
-        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
-        $flag =false;
-        foreach ($permAdjacentRecords as $permAdjacent) {
-            $permission = Perm::find($permAdjacent->perm_id);
-
-            if ($permission && $permission->free_rentals) {
-                $flag = true;
-            }
-        }
+//        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
+//        $flag =false;
+//        foreach ($permAdjacentRecords as $permAdjacent) {
+//            $permission = Perm::find($permAdjacent->perm_id);
+//
+//            if ($permission && $permission->free_rentals) {
+//                $flag = true;
+//            }
+//        }
         $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
-        if($flag){
-            $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
-            $computerRental = ComputerRental::create([
-                'computer_id' => $validatedData['computer_id'],
-                'user_id' => $user->id,
-                'rent_time' => $rent,
-                'minutes' => $minutesDifference,
-                'end_price' => 0,
-            ]);
-
-            return response()->json([
-                'message' => 'good',
-            ]);
-        }
+//        if($flag){
+//            $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
+//            $computerRental = ComputerRental::create([
+//                'computer_id' => $validatedData['computer_id'],
+//                'user_id' => $user->id,
+//                'rent_time' => $rent,
+//                'minutes' => $minutesDifference,
+//                'end_price' => 0,
+//            ]);
+//
+//            return response()->json([
+//                'message' => 'good',
+//            ]);
+//        }
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
