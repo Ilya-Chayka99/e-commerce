@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Computer;
 use App\Models\ComputerRental;
 use App\Models\PaymentHistory;
+use App\Models\Perm;
+use App\Models\PermAdjacent;
 use App\Models\Tarif;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -47,7 +49,18 @@ class ComputerRentalController extends Controller
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
+        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
 
+        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
+        $flag =false;
+        foreach ($permAdjacentRecords as $permAdjacent) {
+            $permission = Perm::find($permAdjacent->perm_id);
+
+            if ($permission && $permission->free_rentals) {
+                $flag = true;
+            }
+        }
+        if($flag){ return response()->json(['price' => 0], 200);}
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
@@ -104,12 +117,35 @@ class ComputerRentalController extends Controller
                 return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
             }
         }
+        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
+        $flag =false;
+        foreach ($permAdjacentRecords as $permAdjacent) {
+            $permission = Perm::find($permAdjacent->perm_id);
 
+            if ($permission && $permission->free_rentals) {
+                $flag = true;
+            }
+        }
+        $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
+        if($flag){
+            $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
+            $computerRental = ComputerRental::create([
+                'computer_id' => $validatedData['computer_id'],
+                'user_id' => $user->id,
+                'rent_time' => $rent,
+                'minutes' => $minutesDifference,
+                'end_price' => 0,
+            ]);
+
+            return response()->json([
+                'message' => 'good',
+            ]);
+        }
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
             ->first();
-        $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
+
         if (!$tariff) {
             $endPrice = $computerPrice * 1 * $minutesDifference ;
         }else{
