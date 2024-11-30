@@ -52,6 +52,7 @@ class ComputerRentalController extends Controller
 
 
         $permAdjacentRecords = $request['perm'];
+        return response()->json(['price' => $permAdjacentRecords], 200);
         $flag =false;
         foreach ($permAdjacentRecords as $permAdjacent) {
             $permission = Perm::find($permAdjacent->perm_id);
