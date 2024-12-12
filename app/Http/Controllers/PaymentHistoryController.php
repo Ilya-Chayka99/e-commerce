@@ -18,6 +18,9 @@ class PaymentHistoryController extends Controller
     public function replenishment(Request $request)
     {
         $payment_type = $request->payment_type;
+        if($payment_type == null){
+            $payment_type = 'Пополнение';
+        }
         $quantity = $request->quantity;
         $payment_hash = $request->payment_hash;
         $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
