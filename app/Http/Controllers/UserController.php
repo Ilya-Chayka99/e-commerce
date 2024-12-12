@@ -84,7 +84,7 @@ class UserController extends Controller
                 $permissions[] = $permission;
             }
         }
-        $rentalsHistory = TableRental::where('user_id', $user->id)->get();
+        $rentalsHistory = TableRental::where('user_id', $user->id)->with('table')->get();
         return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions,'rentals'=>$rentalsHistory]);
     }
 

@@ -11,7 +11,7 @@ class TableRental extends Model
     protected $fillable = ['table_id', 'user_id', 'rent_time', 'minutes', 'end_price'];
     protected $hidden = ['user_id'];
 
-    public function computer(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
+    public function table(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
         return $this->belongsTo(Table::class);
     }
