@@ -29,7 +29,7 @@ class ComputerController extends Controller
 
     public function getAll()
     {
-       //return Carbon::now()->addHours(4);
+       return Carbon::now()->addHours(4);
         $computers = Computer::with(['metadata', 'info','rentals','matrix'])->get()->map(function ($computer) {
 
             return [
