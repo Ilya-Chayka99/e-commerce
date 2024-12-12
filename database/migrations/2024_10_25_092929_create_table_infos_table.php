@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('computers', function (Blueprint $table) {
-            $table->string('name')->nullable();
+        Schema::create('table_infos', function (Blueprint $table) {
+            $table->id();
+            $table->string('desc');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('computers', function (Blueprint $table) {
-            $table->dropColumn('name');
-        });
+        Schema::dropIfExists('table_infos');
     }
 };

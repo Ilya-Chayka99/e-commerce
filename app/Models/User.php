@@ -18,7 +18,7 @@ class User extends Model
 
     public function rentals(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
     {
-        return $this->hasMany(ComputerRental::class);
+        return $this->hasMany(TableRental::class);
     }
     public function perms(): \MongoDB\Laravel\Relations\BelongsToMany|\Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

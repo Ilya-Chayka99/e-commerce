@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Computer;
-use App\Models\ComputerRental;
+use App\Models\Table;
+use App\Models\TableRental;
 use App\Models\Perm;
 use App\Models\PermAdjacent;
 use App\Models\User;
@@ -84,7 +84,7 @@ class UserController extends Controller
                 $permissions[] = $permission;
             }
         }
-        $rentalsHistory = ComputerRental::where('user_id', $user->id)->get();
+        $rentalsHistory = TableRental::where('user_id', $user->id)->get();
         return response()->json(['data' => $request['dataUser'],'access_token' => $request['access_token'],'money' => $user->money ,'perm'=>$permissions,'rentals'=>$rentalsHistory]);
     }
 
@@ -96,13 +96,13 @@ class UserController extends Controller
         }
         $activeOrUpcomingRentals = $user->activeOrUpcomingRentals();
 
-        $rentalsWithComputerNames = array_map(function($rental) {
-            $computer = Computer::find($rental['computer_id']);
-            $rental['computer_name'] = $computer ? $computer->name : 'Unknown';
+        $rentalsWithTableNames = array_map(function($rental) {
+            $computer = Table::find($rental['table_id']);
+            $rental['table_name'] = $computer ? $computer->name : 'Unknown';
             return $rental;
         }, $activeOrUpcomingRentals);
 
-        return response()->json(['data' => array_values($rentalsWithComputerNames),'access_token' => $request['access_token']]);
+        return response()->json(['data' => array_values($rentalsWithTableNames),'access_token' => $request['access_token']]);
     }
 
 }

@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ComputerMetadata>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TableMetadata>
  */
 class ComputerMetadataFactory extends Factory
 {

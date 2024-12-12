@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ComputerMetadata;
+use App\Models\TableMetadata;
 use Illuminate\Http\Request;
 
-class ComputerMetadataController extends Controller
+class TableMetadataController extends Controller
 {
     public function store(Request $request)
     {
@@ -17,11 +17,11 @@ class ComputerMetadataController extends Controller
         $createdRecords = [];
 
         foreach ($validatedData as $data) {
-            $existing = ComputerMetadata::where('name', $data['name'])->first();
+            $existing = TableMetadata::where('name', $data['name'])->first();
 
             if (!$existing) {
-                $computerMetadata = ComputerMetadata::create($data);
-                $createdRecords[] = $computerMetadata;
+                $tableMetadata = TableMetadata::create($data);
+                $createdRecords[] = $tableMetadata;
             }
         }
         if (count($createdRecords) > 0) {

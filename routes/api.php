@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\ComputerController;
-use App\Http\Controllers\ComputerInfoController;
-use App\Http\Controllers\ComputerMetadataController;
-use App\Http\Controllers\ComputerRentalController;
+use App\Http\Controllers\TableController;
+use App\Http\Controllers\TableInfoController;
+use App\Http\Controllers\TableMetadataController;
+use App\Http\Controllers\TableRentalController;
 use App\Http\Controllers\PaymentHistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\PermCheck;
@@ -20,18 +20,18 @@ Route::prefix('user')->middleware([TokenIsValid::class])->group(function () {
     Route::post('/replenishment/history', [PaymentHistoryController::class, 'history']);
 });
 
-Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
-    Route::post('/rental', [ComputerRentalController::class, 'store']);
-    Route::post('/rentalOff', [ComputerRentalController::class, 'cancelRental']);
+Route::prefix('table')->middleware([TokenIsValid::class])->group(function () {
+    Route::post('/rental', [TableRentalController::class, 'store']);
+    Route::post('/rentalOff', [TableRentalController::class, 'cancelRental']);
 });
-Route::post('/computer/rentalCheck', [ComputerRentalController::class, 'check']);
-Route::post('/computer-all', [ComputerController::class, 'getAll']);
+Route::post('/table/rentalCheck', [TableRentalController::class, 'check']);
+Route::post('/table-all', [TableController::class, 'getAll']);
 
-//Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
-    Route::post('/computer/addInfo', [ComputerInfoController::class, 'store']);//->middleware([PermCheck::class]);
-    Route::post('/computer/addMetadata', [ComputerMetadataController::class, 'store']);//->middleware([PermCheck::class]);
-    Route::post('/computer/add', [ComputerController::class, 'store']);//->middleware([PermCheck::class]);
-//});
+////Route::prefix('computer')->middleware([TokenIsValid::class])->group(function () {
+//    Route::post('/table/addInfo', [TableInfoController::class, 'store']);//->middleware([PermCheck::class]);
+//    Route::post('/table/addMetadata', [TableMetadataController::class, 'store']);//->middleware([PermCheck::class]);
+//    Route::post('/table/add', [TableController::class, 'store']);//->middleware([PermCheck::class]);
+////});
 
 
 

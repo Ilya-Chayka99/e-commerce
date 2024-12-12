@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('computer_metadata', function (Blueprint $table) {
+        Schema::create('table_metadata', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('price', 8, 2);
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('computer_metadata');
+        Schema::dropIfExists('table_metadata');
     }
 };

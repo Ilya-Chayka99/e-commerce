@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Computer;
-use App\Models\ComputerRental;
+use App\Models\Table;
+use App\Models\TableRental;
 use App\Models\PaymentHistory;
 use App\Models\Perm;
 use App\Models\PermAdjacent;
@@ -11,74 +11,54 @@ use App\Models\Tarif;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class ComputerRentalController extends Controller
+class TableRentalController extends Controller
 {
     public function check(Request $request)
     {
         $validatedData = $request->validate([
-            'computer_id' => 'required',
+            'table_id' => 'required',
             'rent_start_time' => 'required',
             'rent_end_time' => 'required',
         ]);
-        $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
-        $computerPrice = $computer->metadata->price;
+        $table = Table::with('metadata')->findOrFail($validatedData['table_id']);
+        $tablePrice = $table->metadata->price;
 
         $rentStartTime = strtotime($validatedData['rent_start_time']);
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
-        $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
+        $existingRentals = TableRental::where('table_id', $validatedData['table_id'])->get();
         if($rentStartTime < $currentTime || $rentStartTime > $rentEndTime){
-            return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
+            return response()->json(['message' => 'Не корректное время'], 200);
         }
         foreach ($existingRentals as $rental) {
             $existingRentStartTime = strtotime($rental->rent_time);
             $existingRentEndTime = strtotime($rental->rent_time) + ($rental->minutes * 60);
 
             // Если новая аренда начинается во время уже существующей аренды
-            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime&& $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
+            if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rental->minutes !=0) {
+                return response()->json(['message' => 'Стол уже занят, выберите другое время.'], 200);
             }
 
             // Если новая аренда заканчивается во время уже существующей аренды
             if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the selected end time'], 200);
+                return response()->json(['message' => 'Стол занят, выберите другое время.'], 200);
             }
 
             // Если новая аренда полностью покрывает уже существующую
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
+                return response()->json(['message' => 'Стол занят, выберите другое время.'], 200);
             }
         }
-//        $user = User::where('vkID',$request['dataUser']['response'][0]['id'])->first();
-//        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
-//
-//        $permissions = [];
-//
-//        foreach ($permAdjacentRecords as $permAdjacent) {
-//            $permission = Perm::find($permAdjacent->perm_id);
-//
-//            if ($permission) {
-//                $permissions[] = $permission;
-//            }
-//        }
-//        $flag =false;
-//        foreach ($permissions as $permAdjacent) {
-//            $permission = Perm::find($permAdjacent->perm_id);
-//
-//            if ($permission && $permission->free_rentals) {
-//                $flag = true;
-//            }
-//        }
-//        if($flag){ return response()->json(['price' => 0], 200);}
+
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
             ->first();
         $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
         if (!$tariff) {
-            $endPrice = $computerPrice * 1 * $minutesDifference ;
+            $endPrice = $tablePrice * 1 * $minutesDifference ;
         }else{
-            $endPrice = $computerPrice * $tariff->coefficient * $minutesDifference;
+            $endPrice = $tablePrice * $tariff->coefficient * $minutesDifference;
         }
 
         return response()->json(['price' => $endPrice], 200);
@@ -86,7 +66,7 @@ class ComputerRentalController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'computer_id' => 'required',
+            'table_id' => 'required',
             'rent_start_time' => 'required',
             'rent_end_time' => 'required',
             'access_token' => 'required'
@@ -97,15 +77,15 @@ class ComputerRentalController extends Controller
             return response()->json(['message' => 'Authorization error'], 200);
         }
 
-        $computer = Computer::with('metadata')->findOrFail($validatedData['computer_id']);
-        $computerPrice = $computer->metadata->price;
+        $table = Table::with('metadata')->findOrFail($validatedData['table_id']);
+        $tablePrice = $table->metadata->price;
 
         $rentStartTime = strtotime($validatedData['rent_start_time']);
         $rentEndTime = strtotime($validatedData['rent_end_time']);
         $currentTime = strtotime('now');
-        $existingRentals = ComputerRental::where('computer_id', $validatedData['computer_id'])->get();
+        $existingRentals = TableRental::where('table_id', $validatedData['table_id'])->get();
         if($rentStartTime < $currentTime || $rentStartTime > $rentEndTime){
-            return response()->json(['message' => 'The computer cannot be rented until the current time'], 200);
+            return response()->json(['message' => 'Не корректное время'], 200);
         }
         foreach ($existingRentals as $rental) {
             $existingRentStartTime = strtotime($rental->rent_time);
@@ -113,52 +93,31 @@ class ComputerRentalController extends Controller
 
             // Если новая аренда начинается во время уже существующей аренды
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the selected start time'], 200);
+                return response()->json(['message' => 'Стол уже занят, выберите другое время.'], 200);
             }
 
             // Если новая аренда заканчивается во время уже существующей аренды
             if ($rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the selected end time'], 200);
+                return response()->json(['message' => 'Стол занят, выберите другое время.'], 200);
             }
 
             // Если новая аренда полностью покрывает уже существующую
             if ($rentStartTime >= $existingRentStartTime && $rentStartTime <= $existingRentEndTime && $rentEndTime >= $existingRentStartTime && $rentEndTime <= $existingRentEndTime && $rental->minutes !=0) {
-                return response()->json(['message' => 'Computer is already rented during the entire selected period'], 200);
+                return response()->json(['message' => 'Стол занят, выберите другое время.'], 200);
             }
         }
-//        $permAdjacentRecords = PermAdjacent::where('user_id', $user->id)->get();
-//        $flag =false;
-//        foreach ($permAdjacentRecords as $permAdjacent) {
-//            $permission = Perm::find($permAdjacent->perm_id);
-//
-//            if ($permission && $permission->free_rentals) {
-//                $flag = true;
-//            }
-//        }
+
         $minutesDifference = (strtotime($validatedData['rent_end_time']) - strtotime($validatedData['rent_start_time'])) / 60;
-//        if($flag){
-//            $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
-//            $computerRental = ComputerRental::create([
-//                'computer_id' => $validatedData['computer_id'],
-//                'user_id' => $user->id,
-//                'rent_time' => $rent,
-//                'minutes' => $minutesDifference,
-//                'end_price' => 0,
-//            ]);
-//
-//            return response()->json([
-//                'message' => 'good',
-//            ]);
-//        }
+
         $rentStartTimeFormatted = sprintf('%02d:%02d:%02d', getdate($rentStartTime)['hours'], getdate($rentStartTime)['minutes'], getdate($rentStartTime)['seconds']);
         $tariff = Tarif::where('from', '<=', $rentStartTimeFormatted)
             ->where('to', '>=', $rentStartTimeFormatted)
             ->first();
 
         if (!$tariff) {
-            $endPrice = $computerPrice * 1 * $minutesDifference ;
+            $endPrice = $tablePrice * 1 * $minutesDifference ;
         }else{
-            $endPrice = $computerPrice * $tariff->coefficient * $minutesDifference;
+            $endPrice = $tablePrice * $tariff->coefficient * $minutesDifference;
         }
         if($user->money < $endPrice){
             return response()->json(['message' => 'no money'], 200);
@@ -172,8 +131,8 @@ class ComputerRentalController extends Controller
             'payment_date' => date('Y-m-d H:i:s', strtotime('now')),
         ]);
         $rent = date('Y-m-d H:i:s', strtotime($validatedData['rent_start_time']));
-        $computerRental = ComputerRental::create([
-            'computer_id' => $validatedData['computer_id'],
+        $computerRental = TableRental::create([
+            'table_id' => $validatedData['table_id'],
             'user_id' => $user->id,
             'rent_time' => $rent,
             'minutes' => $minutesDifference,
@@ -198,7 +157,7 @@ class ComputerRentalController extends Controller
             return response()->json(['message' => 'User not found or invalid token'], 200);
         }
 
-        $rental = ComputerRental::find($validatedData['rental_id']);
+        $rental = TableRental::find($validatedData['rental_id']);
         if (!$rental) {
             return response()->json(['message' => 'Rental not found'], 404);
         }

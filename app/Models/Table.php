@@ -7,19 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 //use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Model;
 
-class Computer extends Model
+class Table extends Model
 {
     protected $fillable = ['metadata_id', 'info_id', 'matrix_id','name'];
     protected $hidden = ['metadata_id', 'info_id', 'created_at', 'updated_at'];
 
     public function metadata(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
-        return $this->belongsTo(ComputerMetadata::class);
+        return $this->belongsTo(TableMetadata::class);
     }
 
     public function info(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
     {
-        return $this->belongsTo(ComputerInfo::class);
+        return $this->belongsTo(TableInfo::class);
     }
 
     public function matrix(): \Illuminate\Database\Eloquent\Relations\BelongsTo|\MongoDB\Laravel\Relations\BelongsTo
@@ -29,7 +29,7 @@ class Computer extends Model
 
     public function rentals(): \Illuminate\Database\Eloquent\Relations\HasMany|\MongoDB\Laravel\Relations\HasMany
     {
-        return $this->hasMany(ComputerRental::class);
+        return $this->hasMany(TableRental::class);
     }
 
     public function getStatusAttribute(): string

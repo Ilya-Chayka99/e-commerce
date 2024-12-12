@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('computers', function (Blueprint $table) {
+        Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('metadata_id')->unsigned();
             $table->bigInteger('info_id')->unsigned();
             $table->bigInteger('matrix_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('metadata_id')->references('id')->on('computer_metadata')->onDelete('cascade');
-            $table->foreign('info_id')->references('id')->on('computer_infos')->onDelete('cascade');
+            $table->foreign('metadata_id')->references('id')->on('table_metadata')->onDelete('cascade');
+            $table->foreign('info_id')->references('id')->on('table_infos')->onDelete('cascade');
             $table->foreign('matrix_id')->references('id')->on('matrix_halls')->onDelete('cascade');
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('computers');
+        Schema::dropIfExists('tables');
     }
 };
